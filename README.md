@@ -62,7 +62,7 @@ me = lol_watcher.summoner.by_puuid(my_region, account['puuid'])
 ```
 
 # Print the retrieved summoner data (this includes summoner name, level, etc.).
-#### print(me)
+#### `print(me)`
 This prints out the summoner's data, such as their summoner name, level, etc.
 ```python
 print(me)

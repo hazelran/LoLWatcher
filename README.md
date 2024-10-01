@@ -31,7 +31,8 @@ riot_watcher = RiotWatcher('your-API-key')
 ### In Riot Games API, different region have different execute region
 ```python
 # Depends on the summoner you search
-region = 'na1'  
+region = 'na1'
+exe_region = 'AMERICAS' 
 ```
 ### Reference
 | execute region | region |
@@ -61,7 +62,7 @@ This retrieves summoner information from the League of Legends API based on the 
 me = lol_watcher.summoner.by_puuid(my_region, account['puuid'])
 ```
 
-# Print the retrieved summoner data (this includes summoner name, level, etc.).
+## Print the retrieved summoner data (this includes summoner name, level, etc.).
 #### `print(me)`
 This prints out the summoner's data, such as their summoner name, level, etc.
 ```python
@@ -69,3 +70,39 @@ print(me)
 ```
 
 You can visit [here](https://developer.riotgames.com/docs/lol) for more detail information about Roit ID, PUUID and summonerID. You also can find details about the execute region at `Regional Routing Values`.
+
+## Get a List of latest matches
+```python
+match = lol_watcher.match.matchlist_by_puuid(region, me['puuid'], count = 1)
+```
+
+## Get detailed information on every match
+```python
+match_list = lol_watcher.match.by_id(exe_region, match[0])
+
+all_match_data = []
+
+for team in match_list['info']['teams']:
+    match_info = {
+        'teamId': team['teamId'],
+        'win': team['win'],
+        'firstBlood': team.get('objectives', {}).get('firstBlood', {}).get('first', False),
+        'firstTower': team.get('objectives', {}).get('tower', {}).get('first', False),
+        'firstInhibitor': team.get('objectives', {}).get('inhibitor', {}).get('first', False),
+        'firstBaron': team.get('objectives', {}).get('baron', {}).get('first', False),
+        'firstDragon': team.get('objectives', {}).get('dragon', {}).get('first', False),
+        'firstRiftHerald': team.get('objectives', {}).get('riftHerald', {}).get('first', False),
+        'towerKills': team.get('objectives', {}).get('tower', {}).get('kills', 0),
+        'inhibitorKills': team.get('objectives', {}).get('inhibitor', {}).get('kills', 0),
+        'baronKills': team.get('objectives', {}).get('baron', {}).get('kills', 0),
+        'dragonKills': team.get('objectives', {}).get('dragon', {}).get('kills', 0),
+        'riftHeraldKills': team.get('objectives', {}).get('riftHerald', {}).get('kills', 0),
+        'region': region
+    }
+    all_match_data.append(match_info)  # Add data to the list
+match_info
+```
+## Convert match data into DataFrame
+```python
+match_df = pd.DataFrame(all_match_data)
+```
